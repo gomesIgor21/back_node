@@ -3,27 +3,46 @@ const crypto = require('crypto');
 const postService = require('../service/postService');
 
 const generate = function () {
-  return crypto.randomBytes(20).toString('hex');
-}
+	return crypto.randomBytes(20).toString('hex');
+};
+
+const request = function (url, method, data) {
+	return axios({ url, method, data });
+};
 
 test('Should get posts', async function () {
-
-  const post1 = await postService.savePost({title: generate(), content: generate()});
-  const post2 = await postService.savePost({title: generate(), content: generate()});
-  const post3 = await postService.savePost({title: generate(), content: generate()});
-
-
-	const response = await axios({
-		url: 'http://localhost:3000/posts',
-		method: 'get',
+	const post1 = await postService.savePost({
+		title: generate(),
+		content: generate(),
+	});
+	const post2 = await postService.savePost({
+		title: generate(),
+		content: generate(),
+	});
+	const post3 = await postService.savePost({
+		title: generate(),
+		content: generate(),
 	});
 
-  const posts = response.data;
+	const response = await request('http://localhost:3000/posts', 'get');
 
-  expect(posts).toHaveLength(3); 
+	const posts = response.data;
 
-  await postService.deletePost(post1.id);
-  await postService.deletePost(post2.id);
-  await postService.deletePost(post3.id);
+	expect(posts).toHaveLength(3);
 
+	await postService.deletePost(post1.id);
+	await postService.deletePost(post2.id);
+	await postService.deletePost(post3.id);
+});
+
+test('Should save posts', async function () {
+	const data = {title: generate(), content: generate()};
+
+	const response = await request('http://localhost:3000/posts', 'post', data);
+	const post = response.data;
+
+	expect(post.title).toBe(data.title);
+  expect(post.content).toBe(data.content);
+
+	await postService.deletePost(post.id);
 });
