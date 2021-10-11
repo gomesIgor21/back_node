@@ -7,7 +7,10 @@ router.get('/posts', async function (req, res) {
 	res.json(post);
 });
 
-router.get('/posts/:id', async function (req, res) {});
+router.get('/posts/:id', async function (req, res) {
+	const post = await postService.getPost(req.params.id);
+	res.json(post);
+});
 
 router.post('/posts', async function (req, res) {
 	const post = req.body;
@@ -16,9 +19,13 @@ router.post('/posts', async function (req, res) {
 });
 
 router.put('/posts/:id', async function (req, res) {
-	const post = req.body;
-	await postService.updatePost(req.params.id, post);
-	res.end();
+	try{
+		await postService.updatePost(req.params.id, req.body);
+		res.status(201).end();
+	} catch(e) {
+		res.json(e.message);
+	}
+	
 });
 
 router.delete('/posts/:id', async function (req, res) {});

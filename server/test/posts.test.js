@@ -1,3 +1,4 @@
+const { ok } = require('assert');
 const axios = require('axios');
 const crypto = require('crypto');
 const postService = require('../service/postService');
@@ -36,31 +37,25 @@ test('Should get posts', async function () {
 });
 
 test('Should save posts', async function () {
-	const data = {title: generate(), content: generate()};
+	const data = { title: generate(), content: generate() };
 
 	const response = await request('http://localhost:3000/posts', 'post', data);
 	const post = response.data;
 
 	expect(post.title).toBe(data.title);
-  expect(post.content).toBe(data.content);
+	expect(post.content).toBe(data.content);
 
 	await postService.deletePost(post.id);
 });
 
-test.only('Should update a post', async function () {
-	const post = await postService.savePost({
-		title: generate(),
-		content: generate(),
-	});
-
-  post.title = generate();
-  post.content = generate();
+test('Should update a post', async function () {
+	const post = await postService.savePost({ title: generate(), content: generate() });
+	post.title = generate();
+	post.content = generate();
 
 	await request(`http://localhost:3000/posts/${post.id}`, 'put', post);
-	const updatedPost = postService.getPost(post.id);
-
-	expect(updatedPost.title).toBe(post.title);
-  expect(updatedPost.content).toBe(post.content);
-
+	const updated = await postService.getPost(post.id);
+	
+	expect(updated.title).toBe(post.title);
 	await postService.deletePost(post.id);
 });

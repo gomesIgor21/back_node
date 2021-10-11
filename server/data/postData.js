@@ -15,13 +15,13 @@ exports.savePost = function (post) {
 	);
 };
 
+exports.deletePost = function (id) {
+	return db.none('delete from blog.post where id = $1;', [id]);
+};
+
 exports.updatePost = function (id, post) {
 	return db.none(
 		'update blog.post set title = $1, content = $2 where id = $3;',
 		[post.title, post.content, id]
 	);
-};
-
-exports.deletePost = function (id) {
-	return db.none('delete from blog.post where id = $1;', [id]);
 };
