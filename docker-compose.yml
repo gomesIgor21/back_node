@@ -1,0 +1,31 @@
+version: '3.8'
+
+volumes:
+  pg_data:
+      driver: local
+
+services:
+  postgresql:
+    image: bitnami/postgresql:latest
+    ports:
+      - 5432:5432
+    volumes:
+      - pg_data:/bitnami/postgresql
+    environment:
+      - POSTGRESQL_USERNAME=postgres
+      - POSTGRESQL_PASSWORD=12345678
+      - POSTGRESQL_DATABASE=keycloak
+    restart: unless-stopped
+
+  keycloak:
+    image: bitnami/keycloak:15
+    environment:
+      KEYCLOAK_ADMIN_USER: admin
+      KEYCLOAK_ADMIN_PASSWORD: Pa55word
+      KEYCLOAK_DATABASE_NAME: keycloak   
+      KEYCLOAK_JDBC_PARAMS: sslmode=disable  
+      KEYCLOAK_HTTP_PORT: 8080
+    ports:
+      - 8080:8080
+    depends_on:
+      - postgresql
