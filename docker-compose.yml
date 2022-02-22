@@ -1,0 +1,41 @@
+version: '3.8'
+
+services:
+
+  node-back:
+    image: node-pre2:0.4
+    container_name: node-back
+    environment:
+      - PORT=3000
+      - DB_HOST=postgres
+      - DB_PORT=5432
+      - DB_USER=root
+      - DB_USER_PASSWORD=123456
+      - DB_NAME=blog
+    ports:
+      - '3000:3000'
+    links:
+      - postgres
+    networks:
+      - atividade2
+
+  postgres:
+    image: postgres:9.6
+    container_name: postgres
+    ports:
+      - '5432:5432'
+    environment:
+      - POSTGRES_USER=root
+      - POSTGRES_PASSWORD=123456
+      - POSTGRES_DB=blog
+    networks:
+      - atividade2
+    volumes:
+      - postgres:/var/lib/postgresql/data 
+
+networks:
+  atividade2:
+    driver: bridge
+
+volumes:
+  postgres:
